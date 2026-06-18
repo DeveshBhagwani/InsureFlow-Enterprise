@@ -30,7 +30,7 @@ public class SecurityConfigTests {
     @Test
     void whenAccessingPublicAuthPath_thenStatusIsNotFoundNotUnauthorized() throws Exception {
         // Auth paths are permitted, so they should return 404 Not Found since no controller is registered yet, not 401
-        mockMvc.perform(get("/api/v1/auth/login").contextPath("/api/v1"))
+        mockMvc.perform(get("/api/v1/auth/non-existent-route").contextPath("/api/v1"))
                 .andExpect(status().isNotFound());
     }
 
