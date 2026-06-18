@@ -5,12 +5,14 @@ import com.insureflow.enterprise.dto.*;
 import com.insureflow.enterprise.model.PasswordResetToken;
 import com.insureflow.enterprise.model.Role;
 import com.insureflow.enterprise.model.UserRole;
+import com.insureflow.enterprise.repository.CustomerRepository;
 import com.insureflow.enterprise.repository.PasswordResetTokenRepository;
 import com.insureflow.enterprise.repository.RefreshTokenRepository;
 import com.insureflow.enterprise.repository.RoleRepository;
 import com.insureflow.enterprise.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,18 +44,34 @@ public class AuthControllerTests {
     @Autowired
     private RoleRepository roleRepository;
 
+
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
     @Autowired
     private PasswordResetTokenRepository passwordResetTokenRepository;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @BeforeEach
     void setUp() {
-        refreshTokenRepository.deleteAll();
-        passwordResetTokenRepository.deleteAll();
-        userRepository.deleteAll();
-        roleRepository.deleteAll();
+        // Clear database bypassing foreign keys and soft delete filters
+        jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY FALSE");
+        jdbcTemplate.execute("TRUNCATE TABLE nominees");
+        jdbcTemplate.execute("TRUNCATE TABLE addresses");
+        jdbcTemplate.execute("TRUNCATE TABLE refresh_tokens");
+        jdbcTemplate.execute("TRUNCATE TABLE password_reset_tokens");
+        jdbcTemplate.execute("TRUNCATE TABLE customers");
+        jdbcTemplate.execute("TRUNCATE TABLE user_roles");
+        jdbcTemplate.execute("TRUNCATE TABLE users");
+        jdbcTemplate.execute("TRUNCATE TABLE role_permissions");
+        jdbcTemplate.execute("TRUNCATE TABLE roles");
+        jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY TRUE");
 
         // Seed roles
         for (UserRole roleName : UserRole.values()) {
