@@ -7,6 +7,8 @@ import com.insureflow.enterprise.model.*;
 import com.insureflow.enterprise.repository.CustomerRepository;
 import com.insureflow.enterprise.repository.PolicyHistoryRepository;
 import com.insureflow.enterprise.repository.PolicyRepository;
+import com.insureflow.enterprise.strategy.PremiumCalculationEngine;
+import com.insureflow.enterprise.strategy.PremiumCalculationInput;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -31,6 +33,7 @@ public class PolicyService {
     private final PolicyRepository policyRepository;
     private final CustomerRepository customerRepository;
     private final PolicyHistoryRepository policyHistoryRepository;
+    private final PremiumCalculationEngine premiumCalculationEngine;
 
     @Transactional
     public PolicyResponse createPolicy(PolicyCreateRequest request, String currentUserEmail) {
@@ -188,6 +191,27 @@ public class PolicyService {
         }
 
         return policies.map(this::mapPolicyToResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public PremiumCalculationResponse calculatePremium(PremiumCalculationRequest request) {
+        PolicyType type;
+        try {
+            type = PolicyType.valueOf(request.getPolicyType().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new BusinessException("Invalid policy type. Allowed types: HEALTH, VEHICLE, LIFE");
+        }
+
+        PremiumCalculationInput input = PremiumCalculationInput.builder()
+                .age(request.getAge())
+                .policyType(type)
+                .riskScore(request.getRiskScore())
+                .existingClaims(request.getExistingClaims())
+                .occupation(request.getOccupation())
+                .build();
+
+        java.math.BigDecimal premium = premiumCalculationEngine.calculate(input);
+        return new PremiumCalculationResponse(premium);
     }
 
     // Logging helper

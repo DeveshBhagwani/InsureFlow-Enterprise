@@ -72,4 +72,12 @@ public class PolicyController {
         Page<PolicyResponse> response = policyService.listPolicies(query, page, size, authentication.getName());
         return ResponseEntity.ok(ApiResponse.success(response, "Policies retrieved successfully"));
     }
+
+    @Operation(summary = "Calculate premium dynamically for prospective inputs")
+    @PostMapping("/premium/calculate")
+    public ResponseEntity<ApiResponse<PremiumCalculationResponse>> calculatePremium(
+            @Valid @RequestBody PremiumCalculationRequest request) {
+        PremiumCalculationResponse response = policyService.calculatePremium(request);
+        return ResponseEntity.ok(ApiResponse.success(response, "Premium calculated successfully"));
+    }
 }
