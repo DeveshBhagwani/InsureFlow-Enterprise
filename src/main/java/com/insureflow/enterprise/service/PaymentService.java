@@ -10,6 +10,7 @@ import com.insureflow.enterprise.repository.PaymentRepository;
 import com.insureflow.enterprise.repository.PolicyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.insureflow.enterprise.config.Auditable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final PolicyRepository policyRepository;
 
+    @Auditable(action = "PROCESS_PAYMENT", entityType = "Payment")
     @Transactional
     public PaymentResponse processPayment(PaymentRequest request, String currentUserEmail) {
         Policy policy = policyRepository.findById(request.getPolicyId())
@@ -60,6 +62,7 @@ public class PaymentService {
         return mapPaymentToResponse(saved);
     }
 
+    @Auditable(action = "PROCESS_REFUND", entityType = "Payment")
     @Transactional
     public PaymentResponse processRefund(RefundRequest request, String currentUserEmail) {
         checkAdminAccess();

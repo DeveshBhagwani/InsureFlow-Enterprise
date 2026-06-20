@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.insureflow.enterprise.config.Auditable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -35,6 +36,7 @@ public class PolicyService {
     private final PolicyHistoryRepository policyHistoryRepository;
     private final PremiumCalculationEngine premiumCalculationEngine;
 
+    @Auditable(action = "CREATE_POLICY", entityType = "Policy")
     @Transactional
     public PolicyResponse createPolicy(PolicyCreateRequest request, String currentUserEmail) {
         checkAdminOrAgentAccess();
@@ -111,6 +113,7 @@ public class PolicyService {
         return mapPolicyToResponse(savedPolicy);
     }
 
+    @Auditable(action = "RENEW_POLICY", entityType = "Policy")
     @Transactional
     public PolicyResponse renewPolicy(Long policyId, PolicyRenewRequest request, String currentUserEmail) {
         checkAdminOrAgentAccess();
@@ -143,6 +146,7 @@ public class PolicyService {
         return mapPolicyToResponse(savedPolicy);
     }
 
+    @Auditable(action = "CANCEL_POLICY", entityType = "Policy")
     @Transactional
     public PolicyResponse cancelPolicy(Long policyId, PolicyCancelRequest request, String currentUserEmail) {
         Policy policy = policyRepository.findById(policyId)

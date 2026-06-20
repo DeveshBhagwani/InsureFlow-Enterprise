@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.insureflow.enterprise.config.Auditable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,6 +41,7 @@ public class ClaimService {
 
     private static final String UPLOAD_DIR = "uploads/claims";
 
+    @Auditable(action = "CREATE_CLAIM", entityType = "Claim")
     @Transactional
     public ClaimResponse createClaim(ClaimRequest request, String currentUserEmail) {
         Policy policy = policyRepository.findById(request.getPolicyId())
@@ -119,6 +121,7 @@ public class ClaimService {
         }
     }
 
+    @Auditable(action = "REVIEW_CLAIM", entityType = "Claim")
     @Transactional
     public ClaimResponse reviewClaim(Long claimId, ClaimTransitionRequest request, String currentUserEmail) {
         checkClaimOfficerOrAdminAccess();
@@ -136,6 +139,7 @@ public class ClaimService {
         return mapClaimToResponse(saved);
     }
 
+    @Auditable(action = "INVESTIGATE_CLAIM", entityType = "Claim")
     @Transactional
     public ClaimResponse investigateClaim(Long claimId, ClaimTransitionRequest request, String currentUserEmail) {
         checkClaimOfficerOrAdminAccess();
@@ -153,6 +157,7 @@ public class ClaimService {
         return mapClaimToResponse(saved);
     }
 
+    @Auditable(action = "APPROVE_CLAIM", entityType = "Claim")
     @Transactional
     public ClaimResponse approveClaim(Long claimId, ClaimTransitionRequest request, String currentUserEmail) {
         checkClaimOfficerOrAdminAccess();
@@ -170,6 +175,7 @@ public class ClaimService {
         return mapClaimToResponse(saved);
     }
 
+    @Auditable(action = "REJECT_CLAIM", entityType = "Claim")
     @Transactional
     public ClaimResponse rejectClaim(Long claimId, ClaimTransitionRequest request, String currentUserEmail) {
         checkClaimOfficerOrAdminAccess();

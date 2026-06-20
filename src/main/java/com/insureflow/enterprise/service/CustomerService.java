@@ -8,6 +8,7 @@ import com.insureflow.enterprise.repository.CustomerRepository;
 import com.insureflow.enterprise.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.insureflow.enterprise.config.Auditable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +42,7 @@ public class CustomerService {
     // Define local upload directory relative to project root
     private static final String UPLOAD_DIR = "uploads/kyc";
 
+    @Auditable(action = "CREATE_CUSTOMER", entityType = "Customer")
     @Transactional
     public CustomerResponse createCustomer(CustomerCreateRequest request, String currentUserEmail) {
         User targetUser;
@@ -88,6 +90,7 @@ public class CustomerService {
         return mapCustomerToResponse(savedCustomer);
     }
 
+    @Auditable(action = "UPDATE_CUSTOMER", entityType = "Customer")
     @Transactional
     public CustomerResponse updateCustomer(Long customerId, CustomerUpdateRequest request, String currentUserEmail) {
         Customer customer = customerRepository.findById(customerId)
@@ -199,6 +202,7 @@ public class CustomerService {
         return mapCustomerToResponse(saved);
     }
 
+    @Auditable(action = "DELETE_CUSTOMER", entityType = "Customer")
     @Transactional
     public String softDeleteCustomer(Long customerId) {
         checkAdminOrAgentAccess();
