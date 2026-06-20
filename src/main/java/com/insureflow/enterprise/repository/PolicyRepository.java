@@ -25,4 +25,9 @@ public interface PolicyRepository extends JpaRepository<Policy, Long> {
            "LOWER(u.fullName) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
            "LOWER(u.email) LIKE LOWER(CONCAT('%', :query, '%')))")
     Page<Policy> searchPolicies(@Param("query") String query, Pageable pageable);
+
+    long countByStatus(com.insureflow.enterprise.model.PolicyStatus status);
+
+    @Query("SELECT p.policyType, COUNT(p), SUM(p.premiumAmount) FROM Policy p WHERE p.status = :status GROUP BY p.policyType")
+    java.util.List<Object[]> findPolicyReportByStatus(@Param("status") com.insureflow.enterprise.model.PolicyStatus status);
 }

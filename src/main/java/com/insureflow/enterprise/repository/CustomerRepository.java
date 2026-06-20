@@ -26,4 +26,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
            "LOWER(u.email) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
            "LOWER(c.phone) LIKE LOWER(CONCAT('%', :query, '%')))")
     Page<Customer> searchCustomers(@Param("query") String query, Pageable pageable);
+
+    @Query("SELECT c.user.createdAt FROM Customer c WHERE c.deleted = false")
+    java.util.List<java.time.LocalDateTime> findAllSignupDates();
 }
