@@ -50,24 +50,9 @@ public class AuthService {
             throw new BusinessException("Email is already in use");
         }
 
-        // Default role to CUSTOMER if not provided or invalid
-        UserRole selectedRoleName = UserRole.CUSTOMER;
-        if (request.getRole() != null) {
-            try {
-                selectedRoleName = UserRole.valueOf(request.getRole().toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new BusinessException("Invalid role specified. Allowed roles: CUSTOMER, AGENT, CLAIM_OFFICER, ADMIN");
-            }
-        }
-
-        final UserRole finalSelectedRoleName = selectedRoleName;
-
-        Role userRole = roleRepository.findByName(finalSelectedRoleName)
-                .orElseGet(() -> {
-                    // Seed role if missing (fallback/safety)
-                    Role newRole = Role.builder().name(finalSelectedRoleName).build();
-                    return roleRepository.save(newRole);
-                });
+        // Force default role to CUSTOMER for security (Priority 1 Privilege Escalation prevention)
+        Role userRole = roleRepository.findByName(UserRole.CUSTOMER)
+                .orElseGet(() -> roleRepository.save(Role.builder().name(UserRole.CUSTOMER).build()));
 
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
@@ -166,12 +151,8 @@ public class AuthService {
 
         passwordResetTokenRepository.save(resetToken);
 
-        // Mock email delivery: Log token clearly to console
-        log.info("=================================================");
-        log.info("MOCK EMAIL SENDER - PASSWORD RESET");
-        log.info("To: {}", user.getEmail());
-        log.info("Password Reset Token: {}", token);
-        log.info("=================================================");
+        // Mock email delivery: Log reset event securely without leaking the token
+        log.info("Password reset token generated securely for user: {}", user.getEmail());
 
         return "If the email is registered in our system, you will receive a password reset token shortly.";
     }

@@ -125,7 +125,7 @@ public class AuthControllerTests {
         registerRequest.setEmail("login@insureflow.com");
         registerRequest.setPassword("password123");
         registerRequest.setFullName("Jane Doe");
-        registerRequest.setRole("AGENT");
+        registerRequest.setRole("CUSTOMER");
 
         mockMvc.perform(post("/api/v1/auth/register").contextPath("/api/v1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -144,7 +144,7 @@ public class AuthControllerTests {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.token").value(notNullValue()))
                 .andExpect(jsonPath("$.data.refreshToken").value(notNullValue()))
-                .andExpect(jsonPath("$.data.roles[0]").value("ROLE_AGENT"));
+                .andExpect(jsonPath("$.data.roles[0]").value("ROLE_CUSTOMER"));
     }
 
     @Test
@@ -168,7 +168,7 @@ public class AuthControllerTests {
         registerRequest.setEmail("refresh@insureflow.com");
         registerRequest.setPassword("password123");
         registerRequest.setFullName("Bobby Tables");
-        registerRequest.setRole("ADMIN");
+        registerRequest.setRole("CUSTOMER");
         mockMvc.perform(post("/api/v1/auth/register").contextPath("/api/v1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registerRequest)))

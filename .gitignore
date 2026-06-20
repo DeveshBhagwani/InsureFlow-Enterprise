@@ -11,3 +11,7 @@
 /logs/
 /bin/
 /uploads/
+
+# Exclude generated audit and interview documentation
+docs/INTERVIEW_QUESTIONS.md
+docs/RESUME_DESCRIPTION.md

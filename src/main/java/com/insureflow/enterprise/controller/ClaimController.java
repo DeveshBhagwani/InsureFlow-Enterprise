@@ -48,7 +48,7 @@ public class ClaimController {
     @PutMapping("/{id}/review")
     public ResponseEntity<ApiResponse<ClaimResponse>> reviewClaim(
             @PathVariable Long id,
-            @RequestBody ClaimTransitionRequest request,
+            @Valid @RequestBody ClaimTransitionRequest request,
             Authentication authentication) {
         ClaimResponse response = claimService.reviewClaim(id, request, authentication.getName());
         return ResponseEntity.ok(ApiResponse.success(response, "Claim status updated to UNDER_REVIEW"));
@@ -59,7 +59,7 @@ public class ClaimController {
     @PutMapping("/{id}/investigate")
     public ResponseEntity<ApiResponse<ClaimResponse>> investigateClaim(
             @PathVariable Long id,
-            @RequestBody ClaimTransitionRequest request,
+            @Valid @RequestBody ClaimTransitionRequest request,
             Authentication authentication) {
         ClaimResponse response = claimService.investigateClaim(id, request, authentication.getName());
         return ResponseEntity.ok(ApiResponse.success(response, "Claim status updated to INVESTIGATION"));
@@ -70,7 +70,7 @@ public class ClaimController {
     @PutMapping("/{id}/approve")
     public ResponseEntity<ApiResponse<ClaimResponse>> approveClaim(
             @PathVariable Long id,
-            @RequestBody ClaimTransitionRequest request,
+            @Valid @RequestBody ClaimTransitionRequest request,
             Authentication authentication) {
         ClaimResponse response = claimService.approveClaim(id, request, authentication.getName());
         return ResponseEntity.ok(ApiResponse.success(response, "Claim approved successfully"));
@@ -81,7 +81,7 @@ public class ClaimController {
     @PutMapping("/{id}/reject")
     public ResponseEntity<ApiResponse<ClaimResponse>> rejectClaim(
             @PathVariable Long id,
-            @RequestBody ClaimTransitionRequest request,
+            @Valid @RequestBody ClaimTransitionRequest request,
             Authentication authentication) {
         ClaimResponse response = claimService.rejectClaim(id, request, authentication.getName());
         return ResponseEntity.ok(ApiResponse.success(response, "Claim rejected successfully"));

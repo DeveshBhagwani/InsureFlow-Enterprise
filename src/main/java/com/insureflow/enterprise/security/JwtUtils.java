@@ -17,8 +17,7 @@ import java.util.function.Function;
 @Component
 public class JwtUtils {
 
-    // Default base64-encoded secret key (must be at least 256 bits)
-    @Value("${insureflow.jwt.secret:M2E5NjNhNDItZjIwNS00ZDUzLWExOWEtOWVjYmRiNmY4YzkzY29tLmluc3VyZWZsb3cuZW50ZXJwcmlzZQ==}")
+    @Value("${insureflow.jwt.secret}")
     private String jwtSecret;
 
     @Value("${insureflow.jwt.expirationMs:900000}") // Default 15 minutes
